@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Configurations>Develop;Release;ReleaseAutoBuild</Configurations>
+    <RootNamespace>DnnSharp.SearchBoost.DmxIntegration</RootNamespace>
+    <AssemblyName>DnnSharp.SearchBoost.DmxIntegration</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Develop|AnyCPU'">
+    <OutputPath>bin\Develop\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseAutoBuild|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bring2mind.DNN.Modules.DMX">
+      <HintPath>.lib\Bring2mind.DNN.Modules.DMX.dll</HintPath>
+    </Reference>
+    <Reference Include="Bring2mind.DNN.Modules.DMX.Core">
+      <HintPath>.lib\Bring2mind.DNN.Modules.DMX.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.lib\Lucene.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common2\DnnSharp.Common2\DnnSharp.Common2.csproj" />
+    <ProjectReference Include="..\..\Common\DnnSharp.Common\DnnSharp.Common.csproj" />
+    <ProjectReference Include="..\DnnSharp.SearchBoost.Core\DnnSharp.SearchBoost.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DotNetNuke.Core" Version="9.9.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Debug goto copyfiles&#xD;&#xA;if $(ConfigurationName) == Develop goto copyfiles&#xD;&#xA;if $(ConfigurationName) == Release goto copyfiles&#xD;&#xA;goto end&#xD;&#xA;&#xD;&#xA;:copyfiles&#xD;&#xA;xcopy &quot;$(ProjectDir)Config\*.*&quot; &quot;$(ProjectDir)..\Config\*.*&quot; /e /s /y /q&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(ProjectDir)../../../../bin/$(TargetName).dll&quot;&#xD;&#xA;copy &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(ProjectDir)../../../../bin/$(TargetName).pdb&quot;&#xD;&#xA;:end" />
+  </Target>
+</Project>
